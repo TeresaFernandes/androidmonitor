@@ -1,0 +1,11 @@
+<resources>
+
+    <string name="app_name">Monitor</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_monitor">SE Monitor</string>
+    <string name="run_string">Run</string>
+    <string name="battery_level">Battery Level: x%</string>
+    <string name="stop_string">Stop</string>
+
+</resources>
