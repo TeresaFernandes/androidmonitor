@@ -1,8 +1,6 @@
 package ufrn.dimap.se.monitor;
 
 import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Binder;
@@ -10,15 +8,12 @@ import android.os.IBinder;
 
 public class MonitorService extends Service {
 	private final MonitorBinder binder = new MonitorBinder();
-	private Data currentBData;
-	private Data lastBData;
-	private int currentBatteryConsume;
-	private int currentBatteryAcc;
 	private MonitorData data;
-	protected static long readInterval;
+	private Intent battery;
+	protected static long readInterval = 1000;
 
 	public MonitorService() {
-		currentBatteryAcc = 0;
+		System.out.println("construiu serviço");
 	}
 
 	public MonitorData getData(){
@@ -32,7 +27,7 @@ public class MonitorService extends Service {
 
 	@Override
 	public void onCreate() {
-		//	System.out.println("weeee");
+		System.out.println("serviço criado");
 		readThread.start();
 		data = new MonitorData();
 	}
@@ -51,35 +46,14 @@ public class MonitorService extends Service {
 
 	@Override
 	public void onStart(Intent intent, int startid) {
-		// code to execute when the service is starting up
+		IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+		battery = registerReceiver(null, ifilter);
 	}
 
 	public void setInterval(int interval) {
 		readInterval = interval;
 	}
 
-	public void startBatteryMananger() {
-		BroadcastReceiver br = new BroadcastReceiver() {
-			@Override
-			public void onReceive(Context arg0, Intent in) {
-				lastBData = currentBData;
-				currentBData = new Data();
-				currentBData
-						.setBatteryCurrentValue(in.getIntExtra("level", -1));
-				currentBData.setBatteryScale(in.getIntExtra("scale", -1));
-				currentBData.setAcc(currentBatteryAcc);
-				if (lastBData != null) {
-					// Atualizar o consumo de bateria
-					currentBatteryConsume = lastBData.getValue()
-							- currentBData.getValue();
-					currentBatteryAcc += currentBatteryConsume;
-				}
-			}
-		};
-		IntentFilter batteryLevelFilter = new IntentFilter(
-				Intent.ACTION_BATTERY_CHANGED);
-		registerReceiver(br, batteryLevelFilter);
-	}
 
 	private Runnable read = new Runnable() {
 		public void run() {
@@ -87,8 +61,7 @@ public class MonitorService extends Service {
 				try {
 					// enviar dados para o intent
 					// data = new MonitorData(CPU, batteryCurrent);
-					currentBatteryAcc = 0;
-					data.updateBattery(currentBData);
+					data.update(battery);
 					Thread.sleep(readInterval);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
@@ -98,4 +71,5 @@ public class MonitorService extends Service {
 		}
 	};
 	private Thread readThread = new Thread(read, "readThread");
+
 }

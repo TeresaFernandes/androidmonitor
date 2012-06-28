@@ -3,27 +3,26 @@ package ufrn.dimap.se.monitor;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.Vector;
-
-import android.content.ComponentName;
-import android.os.IBinder;
+import android.content.Intent;
+import android.os.BatteryManager;
 
 public class MonitorData {
-	private long batteryConsumeValue;
-	private int batteryScale;
 	private BufferedReader readStream;
-	private String x;
 	private String[] a;
-	Vector<Float> cPUTotalP, cPUAMP, cPURestP;
+	Vector<Float> cPUTotalP;
 	private long workT, totalT;
 	private long total, totalBefore, work, workBefore;
-
+	private int batteryLastLevel;
+	private int batteryLevel;
+	private int batteryScale;
 
 	public MonitorData() {
 		// TODO Auto-generated constructor stub
+		cPUTotalP = new Vector<Float>(15);
 	}
 
 	public long getBatteryConsume() {
-		return batteryConsumeValue;
+		return batteryLastLevel - batteryLevel;
 	}
 
 	public void setBatteryScale(int intExtra) {
@@ -34,14 +33,7 @@ public class MonitorData {
 		return batteryScale;
 	}
 
-	public void updateBattery(Data currentBData) {
-		//update();
-		int consume = currentBData.getTotalConsume();
-		this.batteryConsumeValue = consume * MonitorService.readInterval / 1000;
-		this.batteryScale = currentBData.getScale();
-	}
-
-	public void update() {
+	public void update(Intent battery) {
 		try {
 			readStream = new BufferedReader(new FileReader("/proc/stat"));
 			a = readStream.readLine().split("[ ]+", 9);
@@ -54,10 +46,14 @@ public class MonitorData {
 				workT = work - workBefore;
 				totalT = total - totalBefore;
 				cPUTotalP.add(0, workT * 100 / (float) totalT);
-				cPURestP.add(0, (workT) * 100 / (float) totalT);
 			}
 			workBefore = work;
 			totalBefore = total;
+			System.out.println(cPUTotalP.lastElement() + "%");
+			batteryLastLevel = batteryLevel;
+			batteryLevel = battery.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+			batteryScale = battery.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+			System.out.println("Bateria: "+batteryLevel + " / " + batteryScale+ " = " + (long)batteryLevel/batteryScale);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

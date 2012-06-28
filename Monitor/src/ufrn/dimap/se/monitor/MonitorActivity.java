@@ -7,6 +7,7 @@ import ufrn.dimap.se.monitor.R.id;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -39,8 +40,15 @@ public class MonitorActivity extends Activity {
         setContentView(R.layout.activity_monitor);
         monitorService = new MonitorService();
         monitorService.setInterval(1000);
+        System.out.println("service =" + monitorService);
+
+        startService(new Intent(this, MonitorService.class));
+        
+        System.out.println("supimpa");
+        
         batteryTextView = (TextView) findViewById(id.valueBattery);
         batteryTextViewPercent = (TextView) findViewById(id.percentBattery);
+
     }
 
     @Override
