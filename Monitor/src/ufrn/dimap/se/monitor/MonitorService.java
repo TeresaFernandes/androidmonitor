@@ -14,6 +14,7 @@ public class MonitorService extends Service {
 	private Data lastBData;
 	private int currentBatteryConsume;
 	private int currentBatteryAcc;
+	private MonitorData data;
 	protected long readInterval;
 
 	public MonitorService() {
@@ -59,6 +60,7 @@ public class MonitorService extends Service {
 				currentBData
 						.setBatteryCurrentValue(in.getIntExtra("level", -1));
 				currentBData.setBatteryScale(in.getIntExtra("scale", -1));
+				currentBData.setAcc(currentBatteryAcc);
 				if (lastBData != null) {
 					// Atualizar o consumo de bateria
 					currentBatteryConsume = lastBData.getValue()
@@ -75,8 +77,9 @@ public class MonitorService extends Service {
 	private Runnable readThread = new Runnable() {
 		public void run() {
 			try {
-				currentBatteryAcc = 0;
 				// enviar dados para o intent
+				//data = new MonitorData(CPU, batteryCurrent);
+				data.updateBattery(currentBData);
 				Thread.sleep(readInterval);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
