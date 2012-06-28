@@ -15,7 +15,7 @@ public class MonitorService extends Service {
 	private int currentBatteryConsume;
 	private int currentBatteryAcc;
 	private MonitorData data;
-	protected long readInterval;
+	protected static long readInterval;
 
 	public MonitorService() {
 		currentBatteryAcc = 0;
@@ -28,7 +28,9 @@ public class MonitorService extends Service {
 
 	@Override
 	public void onCreate() {
-		System.out.println("weeee");
+		//	System.out.println("weeee");
+		readThread.start();
+		data = new MonitorData();
 	}
 
 	public class MonitorBinder extends Binder {
@@ -39,7 +41,8 @@ public class MonitorService extends Service {
 
 	@Override
 	public void onDestroy() {
-		// code to execute when the service is shutting down
+		readThread.interrupt();
+		readThread = null;
 	}
 
 	@Override
@@ -48,7 +51,7 @@ public class MonitorService extends Service {
 	}
 
 	public void setInterval(int interval) {
-		this.readInterval = interval;
+		readInterval = interval;
 	}
 
 	public void startBatteryMananger() {
@@ -74,17 +77,21 @@ public class MonitorService extends Service {
 		registerReceiver(br, batteryLevelFilter);
 	}
 
-	private Runnable readThread = new Runnable() {
+	private Runnable read = new Runnable() {
 		public void run() {
-			try {
-				// enviar dados para o intent
-				//data = new MonitorData(CPU, batteryCurrent);
-				data.updateBattery(currentBData);
-				Thread.sleep(readInterval);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			while (readThread == Thread.currentThread()) {
+				try {
+					// enviar dados para o intent
+					// data = new MonitorData(CPU, batteryCurrent);
+					currentBatteryAcc = 0;
+					data.updateBattery(currentBData);
+					Thread.sleep(readInterval);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	};
+	private Thread readThread = new Thread(read, "readThread");
 }

@@ -8,7 +8,7 @@ import android.content.ComponentName;
 import android.os.IBinder;
 
 public class MonitorData {
-	private int batteryConsumeValue;
+	private long batteryConsumeValue;
 	private int batteryScale;
 	private BufferedReader readStream;
 	private String x;
@@ -22,7 +22,7 @@ public class MonitorData {
 		// TODO Auto-generated constructor stub
 	}
 
-	public long getBatteryCurrent() {
+	public long getBatteryConsume() {
 		return batteryConsumeValue;
 	}
 
@@ -35,9 +35,9 @@ public class MonitorData {
 	}
 
 	public void updateBattery(Data currentBData) {
-		update();
+		//update();
 		int consume = currentBData.getTotalConsume();
-		this.batteryConsumeValue = consume;
+		this.batteryConsumeValue = consume * MonitorService.readInterval / 1000;
 		this.batteryScale = currentBData.getScale();
 	}
 
