@@ -10,34 +10,61 @@
         android:layout_alignParentLeft="true"
         android:layout_marginTop="167dp" />
 
-    <ToggleButton
-        android:id="@+id/start"
+    <LinearLayout
+        android:id="@+id/linearLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:text="@string/run_string"
-        android:textOff="@string/run_string"
-        android:textOn="@string/stop_string" />
+        android:layout_alignParentTop="true" >
 
-    <SeekBar
-        android:id="@+id/updateRate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="79dp"
-        android:max="100"
-        android:progress="20" />
+        <SeekBar
+            android:id="@+id/updateRate"
+            android:layout_width="230dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="100"
+            android:paddingTop="12dip"
+            android:progress="20" />
 
-    <EditText
-        android:id="@+id/BatteryLevel"
+        <ToggleButton
+            android:id="@+id/start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/run_string"
+            android:textOff="@string/run_string"
+            android:textOn="@string/stop_string" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/start"
         android:layout_alignParentLeft="true"
-        android:ems="10" >
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/linearLayout1"
+        android:layout_marginTop="24dp" >
 
-        <requestFocus />
-    </EditText>
+        <TextView
+            android:id="@+id/textBattery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dip"
+            android:text="Bateria" />
+
+        <TextView
+            android:id="@+id/percentBattery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="80dip"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/valueBattery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="30dip"
+            android:text="TextView" />
+
+    </LinearLayout>
 
 </RelativeLayout>
