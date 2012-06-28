@@ -14,7 +14,7 @@ import android.support.v4.app.NavUtils;
 
 public class MonitorActivity extends Activity {
 	
-	static int INTERVAL_UPDATE;
+	static int INTERVAL_UPDATE = 100;
 	private TextView batteryTextView, batteryTextViewPercent;
 	private MonitorService monitorService;
 	private DecimalFormat myFormat = new DecimalFormat("##,###,##0");
@@ -23,7 +23,7 @@ public class MonitorActivity extends Activity {
 	private Runnable drawRunnable = new Runnable() {
 		public void run() {
 			try {
-				setTextLabel(batteryTextView,batteryTextViewPercent,monitorService.getData().getBatteryCurrent(), monitorService.getData().getBatteryScale());
+				setTextLabel(batteryTextView,batteryTextViewPercent,monitorService.getData().getBatteryConsume(), monitorService.getData().getBatteryScale());
 				Thread.sleep(INTERVAL_UPDATE);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -37,7 +37,8 @@ public class MonitorActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monitor);
-        
+        monitorService = new MonitorService();
+        monitorService.setInterval(1000);
         batteryTextView = (TextView) findViewById(id.valueBattery);
         batteryTextViewPercent = (TextView) findViewById(id.percentBattery);
     }
@@ -51,7 +52,7 @@ public class MonitorActivity extends Activity {
  
     private void setTextLabel(TextView textView, TextView textViewPercent, long value, long scale) {
     	
-    	textView.setText(myFormat.format(value)+" kB");
+    	textView.setText(myFormat.format(value)+" Uni");
     	textViewPercent.setText(myFormatPercent.format(value*100/(float)scale)+"%");
     			
     }
