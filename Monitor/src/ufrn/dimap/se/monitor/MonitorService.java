@@ -21,6 +21,10 @@ public class MonitorService extends Service {
 		currentBatteryAcc = 0;
 	}
 
+	public MonitorData getData(){
+		return this.data;
+	}
+		
 	@Override
 	public IBinder onBind(Intent intent) {
 		return binder;
