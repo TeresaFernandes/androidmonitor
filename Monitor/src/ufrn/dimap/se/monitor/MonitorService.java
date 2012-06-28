@@ -54,7 +54,6 @@ public class MonitorService extends Service {
 		readInterval = interval;
 	}
 
-
 	private Runnable read = new Runnable() {
 		public void run() {
 			while (readThread == Thread.currentThread()) {
