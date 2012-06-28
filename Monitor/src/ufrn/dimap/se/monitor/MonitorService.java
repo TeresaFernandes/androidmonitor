@@ -30,6 +30,7 @@ public class MonitorService extends Service {
 		System.out.println("serviço criado");
 		readThread.start();
 		data = new MonitorData();
+		data.changeWriting();
 	}
 
 	public class MonitorBinder extends Binder {
@@ -42,6 +43,7 @@ public class MonitorService extends Service {
 	public void onDestroy() {
 		readThread.interrupt();
 		readThread = null;
+		if (data!=null) data.exit();
 	}
 
 	@Override
@@ -63,7 +65,7 @@ public class MonitorService extends Service {
 					data.update(battery);
 					Thread.sleep(readInterval);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
+
 					e.printStackTrace();
 				}
 			}

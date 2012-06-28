@@ -1,7 +1,11 @@
 package ufrn.dimap.se.monitor;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import android.content.Intent;
 import android.os.BatteryManager;
@@ -17,9 +21,44 @@ public class MonitorData {
 	private int batteryScale;
 	private int memTotal;
 	private int memFree;
+	private long counter;
+	private BufferedWriter buf;
+	public boolean writing;
 
 	public MonitorData() {
-		// TODO Auto-generated constructor stub
+		counter = 0;
+		try {
+			buf = new BufferedWriter(new FileWriter("data.txt"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		writing = false;
+	}
+
+	public void exit() {
+		if (buf != null)
+			try {
+				buf.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
+
+	public void reset() {
+		counter = 0;
+		if (buf != null)
+			try {
+				buf.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		File file = new File("data.txt");
+		if (file != null) {
+			file.delete();
+		}
 	}
 
 	public long getBatteryConsume() {
@@ -48,6 +87,7 @@ public class MonitorData {
 				totalT = total - totalBefore;
 				cPUTotalP = workT * 100 / (float) totalT;
 			}
+
 			readStream.close();
 			workBefore = work;
 			totalBefore = total;
@@ -71,8 +111,40 @@ public class MonitorData {
 			readStream.close();
 			System.out.println("Memoria: (Total): " + memTotal + " (Usada):"
 					+ (memTotal - memFree));
+
+			if (writing) fileWrite();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void fileWrite() {
+		try {
+			if (buf != null) {
+				buf.write(counter++ + ";" + cPUTotalP + ";"
+						+ (memTotal - memFree) + ";"
+						+ (batteryLevel - batteryLastLevel) + "\n");
+			} else
+				buf = new BufferedWriter(new FileWriter("data.txt"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// escreve no arquivo
+	}
+
+	public void changeWriting() {
+		if (writing) {
+			if (buf!=null)
+				try {
+					buf.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		} else {
+			reset();
+		}
+		writing=!writing;
 	}
 }
