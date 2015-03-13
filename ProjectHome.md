@@ -1,0 +1,1 @@
+A monitor which monitorates Battery Levels, CPU use, Memmory use and some other stuff.
